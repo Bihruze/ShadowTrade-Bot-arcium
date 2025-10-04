@@ -1,0 +1,31 @@
+{
+  "name": "shadow-trade-integrated",
+  "version": "1.0.0",
+  "description": "ShadowTrade Bot - Integrated Python Backtesting with Arcium MPC",
+  "main": "integrated_bot.py",
+  "scripts": {
+    "start": "python integrated_bot.py",
+    "test": "python -m pytest tests/",
+    "test-arcium": "node test-arcium-fixed.js",
+    "test-mxe": "node test-mxe.js",
+    "test-circuit": "node test-circuit.js"
+  },
+  "keywords": [
+    "trading",
+    "bot",
+    "arcium",
+    "mpc",
+    "privacy",
+    "solana",
+    "defi"
+  ],
+  "author": "ShadowTrade Team",
+  "license": "MIT",
+  "dependencies": {
+    "@arcium-hq/client": "^0.3.0",
+    "@arcium-hq/reader": "^0.3.0",
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/web3.js": "^1.98.4",
+    "circomlib": "^2.0.5"
+  }
+}
