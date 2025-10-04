@@ -29,3 +29,7 @@ aiohttp>=3.8.0
 pytest>=7.0.0
 pytest-asyncio>=0.21.0
 
+# Wallet and Crypto
+base58>=2.1.0
+cryptography>=41.0.0
+

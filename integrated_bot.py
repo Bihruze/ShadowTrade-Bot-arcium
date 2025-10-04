@@ -19,6 +19,7 @@ from data_fetcher import DataFetcher
 from indicators import TechnicalIndicators
 from backtest_engine import BacktestEngine
 from visualizer import Visualizer
+from wallet_manager import SolanaWalletManager
 
 class ArciumIntegration:
     """Handles Arcium MPC integration"""
@@ -197,11 +198,13 @@ class ShadowTradeIntegratedBot:
         self.backtest_engine = BacktestEngine()
         self.visualizer = Visualizer()
         self.arcium = ArciumIntegration()
+        self.wallet_manager = SolanaWalletManager()
         
         print("🚀 ShadowTrade Integrated Bot initialized")
         print(f"   📊 Backtesting: ✅ Available")
         print(f"   🔐 Arcium MPC: {'✅ Available' if self.arcium.arcium_available else '⚠️ Mock Mode'}")
         print(f"   🟢 Node.js: {'✅ Available' if self.arcium.node_available else '❌ Not Available'}")
+        print(f"   🔑 Wallet Manager: ✅ Available")
     
     async def run_integrated_backtest(self, 
                                     symbol: str = "SOLUSDT",
@@ -393,9 +396,10 @@ async def main():
         print("1. Run Integrated Backtest")
         print("2. Run Live Trading Simulation")
         print("3. Test Arcium Integration")
-        print("4. Exit")
+        print("4. Wallet Management")
+        print("5. Exit")
         
-        choice = input("\n🎯 Select option (1-4): ").strip()
+        choice = input("\n🎯 Select option (1-5): ").strip()
         
         if choice == "1":
             try:
@@ -442,11 +446,71 @@ async def main():
             print(f"   🔐 Encryption Test: {'✅ Passed' if decrypted == test_data else '❌ Failed'}")
         
         elif choice == "4":
+            try:
+                print("\n🔑 Wallet Management")
+                print("1. Generate New Wallet")
+                print("2. Load Existing Wallet")
+                print("3. List All Wallets")
+                print("4. Check Wallet Balance")
+                print("5. Fund Wallet (Devnet)")
+                print("6. Back to Main Menu")
+                
+                wallet_choice = input("\n🎯 Select wallet option (1-6): ").strip()
+                
+                if wallet_choice == "1":
+                    wallet_name = input("📝 Enter wallet name (optional): ").strip()
+                    bot.wallet_manager.generate_new_wallet(wallet_name or None)
+                
+                elif wallet_choice == "2":
+                    wallet_name = input("📝 Enter wallet name: ").strip()
+                    try:
+                        bot.wallet_manager.load_wallet(wallet_name)
+                    except FileNotFoundError as e:
+                        print(f"❌ {e}")
+                
+                elif wallet_choice == "3":
+                    wallets = bot.wallet_manager.list_wallets()
+                    print(f"\n📋 Available Wallets ({len(wallets)}):")
+                    for wallet in wallets:
+                        print(f"   🔑 {wallet['name']}")
+                        print(f"      📍 {wallet['publicKey']}")
+                        print(f"      🌐 {wallet['network']} ({wallet['type']})")
+                
+                elif wallet_choice == "4":
+                    wallet_name = input("📝 Enter wallet name (optional): ").strip()
+                    try:
+                        balance = bot.wallet_manager.get_wallet_balance(wallet_name or None)
+                        print(f"💰 Balance: {balance.get('balance', 0):.4f} SOL")
+                    except Exception as e:
+                        print(f"❌ {e}")
+                
+                elif wallet_choice == "5":
+                    wallet_name = input("📝 Enter wallet name (optional): ").strip()
+                    amount = float(input("💰 Enter amount in SOL (default: 1.0): ").strip() or "1.0")
+                    try:
+                        result = bot.wallet_manager.fund_wallet(wallet_name or None, amount)
+                        if result.get('success'):
+                            print("✅ Wallet funded successfully!")
+                        else:
+                            print(f"❌ Funding failed: {result.get('error')}")
+                    except Exception as e:
+                        print(f"❌ {e}")
+                
+                elif wallet_choice == "6":
+                    continue
+                
+                else:
+                    print("❌ Invalid wallet option.")
+                    
+            except Exception as e:
+                print(f"❌ Wallet management error: {e}")
+        
+        elif choice == "5":
             print("👋 Goodbye!")
             break
         
         else:
-            print("❌ Invalid option. Please select 1-4.")
+            print("❌ Invalid option. Please select 1-5.")
 
 if __name__ == "__main__":
     asyncio.run(main())
